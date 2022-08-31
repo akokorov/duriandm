@@ -7,13 +7,13 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau,TensorBo
 
 from time import localtime, strftime
 
-#df=pd.read_excel('data/selected sample_Absorbance.xlsx',sheet_name='selected sample',index_col=0)
-df=pd.read_csv('data/NAnderson2020MendeleyMangoNIRData.csv')
+df=pd.read_excel('data/selected sample_Absorbance.xlsx',sheet_name='selected sample',index_col=0)
+#df=pd.read_csv('data/NAnderson2020MendeleyMangoNIRData.csv')
 col = df.columns
-#X=np.array(df[col[2:308]])
-X=np.array(df[col[147:282]])
-#Y=np.array(df[' Reference Value #1']/100)
-Y=np.array(df['DM'])
+X=np.array(df[col[140:275]])
+#X=np.array(df[col[147:282]])
+Y=np.array(df[' Reference Value #1'])
+#Y=np.array(df['DM'])
 
 
 out = np.random.permutation(len(X))
@@ -28,20 +28,20 @@ X_train = X_shuf[:splt]
 #X_train = np.expand_dims(X_train,axis=2)
 Y_train = Y_shuf[:splt]
 
-np.save('X_train.npy',X_train)
-np.save('Y_train.npy',Y_train)
+np.save('X_train_durian.npy',X_train)
+np.save('Y_train_durian.npy',Y_train)
 
 X_test = X_shuf[splt:]
 #X_test = np.expand_dims(X_test,axis=2)
 Y_test = Y_shuf[splt:]
-np.save('X_test.npy',X_test)
-np.save('Y_test.npy',Y_test)
+np.save('X_test_durian.npy',X_test)
+np.save('Y_test_durian.npy',Y_test)
 
 Y_train = np.expand_dims(Y_train, axis=1)
 Y_test = np.expand_dims(Y_test, axis=1)
 #tensorflow.config.run_functions_eagerly(True)
 
-model=load_model('model/model_mango_trained.h5',compile = False)
+model=load_model('model/model_durian_trained.h5',compile = False)
 
 adam = optimizers.Adam(lr=0.00001)
 
@@ -54,14 +54,14 @@ reduce_lr = ReduceLROnPlateau(monitor='val_loss',
 
 
 history = model.fit(X_train, Y_train,
-                    epochs=5000,
+                    epochs=500,
                     batch_size=64,
                     shuffle=True,
                     validation_data=(X_test, Y_test),
                     verbose=1,
                     callbacks=reduce_lr)
 
-model.save('model/model_mango_trained.h5')
+model.save('model/model_durian_trained.h5')
 
 history = pd.DataFrame(history.history)
 
